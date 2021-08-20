@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Calculator app</title>
+    <link rel="stylesheet" href="style.css" type="text/css" media="all" />
+</head>
+<body>
+
+    <!--preview hasil-->
+    <div class="container-screen">
+        <div class="detail-p" id="detail"></div>
+        <div class="operator" id="operand"></div>
+        <div class="text-size-6 result-preview result-p" id="result"></div>
+    </div>
+
+    <!--tombol-->
+    <div class="container-button">
+        <!--pertama-->
+        <div class="container">
+            <div class="row">
+                <button id="clear" class=" button1 button-putih text-button" type="submit">C</button>
+                <button class="button1 button-putih text-button" type="submit">+/-</button>
+                <button class="button1 button-putih text-button" type="submit">%</button>
+                <button class="button1 button-putih text-button" type="submit">/</button>
+            </div>
+        </div>
+        <!--kedua-->
+        <div class="container">
+            <div class="row">
+                <button class="button2 text-button" type="submit">7</button>
+                <button class="button2 text-button" type="submit">8</button>
+                <button class="button2 text-button" type="submit">9</button>
+                <button class="button2 button-putih text-button" type="submit">×</button>
+            </div>
+        </div>
+        <!--ketiga-->
+        <div class="container">
+            <div class="row">
+                <button class="button3 text-button" type="submit">4</button>
+                <button class="button3 text-button" type="submit">5</button>
+                <button class="button3 text-button" type="submit">6</button>
+                <button class="button3 button-putih text-button" type="submit">-</button>
+            </div>
+        </div>
+        <!--kekempat-->
+        <div class="container">
+            <div class="row">
+                <button class="button4 text-button" type="submit">1</button>
+                <button class="button4 text-button" type="submit">2</button>
+                <button class="button4 text-button" type="submit">3</button>
+                <button class="button4 button-putih text-button" type="submit">+</button>
+            </div>
+        </div>
+        <!--kelima-->
+        <div class="container">
+            <div class="row">
+                <button class="button-angka-0 text-button" type="submit">0</button>
+                <button class="button4 text-button" type="submit">.</button>
+                <button class="button4 button-putih text-button" type="submit">=</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript" charset="utf-8">
+        //debugger
+        let button = document.querySelectorAll("button");
+        let result = document.querySelector("#result");
+        let detail = document.querySelector("#detail");
+        let operand = document.querySelector("#operand");
+        //preview
+        let results = "";
+        let operands = "";
+        let negative = false;
+
+        //ketika function di klilk
+        let clicked = function(e) {
+            let current = e.target.innerHTML;
+            //Clear layar
+            if (current == 'C') {
+                result.innerHTML = "";
+                detail.innerHTML = "";
+                operand.innerHTML = "";
+                results = "";
+                operands = "";
+                current = "";
+            }
+
+            //tombol negative
+            if (current == '+/-') {
+                if (negative) {
+                    let _result = result.innerHTML;
+                    if (_result.substring(0, 1) == "-") {
+                        result.innerHTML = _result.substring(1, _result.length);
+                    }
+                    negative = false;
+                } else {
+                    result.innerHTML = '-' + result.innerHTML;
+                    negative = true;
+                }
+                current = '';
+            }
+
+            //hanya boleh awalan angka
+            if (result.innerHTML.length == 0 && current.match(/[0-9.]/g) == null) {
+                current = '';
+            }
+
+            //tidak boleh ada operator lebih dari satu
+            if (operands != '' && current.match(/\+|-|×|\/|=|%/g)) {
+                operand.innerHTML = current;
+                let r = result.innerHTML;
+                let d = detail.innerHTML;
+                r = r.substring(0, r.length-1) + current;
+                d = d.substring(0, d.length-1) + current;
+                result.innerHTML = r;
+                detail.innerHTML = d;
+                operands = current;
+                current = '';
+            }
+
+
+            //menulis angka
+            if (current.match(/[0-9.]/g) != null) {
+                results += current;
+                operands = '';
+            } else {
+                //menulis operator
+                if (current.match(/\+|-|×|\/|=|%/g) != null) {
+                    operands = current;
+                    operand.innerHTML = current;
+                }
+            }
+
+
+            //detail tampilkan jumlah
+            if (operands == '=') {
+                detail.innerHTML = eval(detail.innerHTML.replace('×', '*')).toString();
+            }
+
+            //agar x jadi *
+            if (current == '=') {
+                results = eval(detail.innerHTML.replace('×', '*')).toString();
+                result.innerHTML = results;
+                operands = current;
+            } else {
+                detail.innerHTML += current;
+                result.innerHTML += current;
+            }
+
+            if (result.innerHTML.length > 22) {
+                let x = result.innerHTML;
+                result.innerHTML = x.substring(x.length-22, x.length);
+            }
+
+            if (detail.innerHTML.length > 22) {
+                let x = detail.innerHTML;
+                detail.innerHTML = x.substring(x.length-22, x.length);
+            }
+        }
+
+        //addEventListener
+        button.forEach(function (e) {
+            e.addEventListener('click', clicked);
+        });
+    </script>
+</body>
+</html>
